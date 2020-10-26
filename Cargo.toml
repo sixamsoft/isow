@@ -1,6 +1,6 @@
 [package]
 name = "isow"
-version = "0.3.0"
+version = "0.2.16-beta"
 authors = ["Anthony Foxclaw"]
 edition = "2018"
 repository = "https://github.com/tonytins/isow"
@@ -22,7 +22,7 @@ chrono = "0.4"
 rbtag = "0.3"
 isocal = "0.1"
 self_update = { version = "0.11", optional = true }
-clap = { version = "2.33", features = [ "yaml", "wrap_help" ] }
+clap = { version = "3.0.0-beta.1", features = [ "wrap_help" ] }
 
 [features]
 updater = ["self_update"]

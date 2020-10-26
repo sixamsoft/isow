@@ -1,8 +1,13 @@
 # Change Log
 
-### 0.3.0
+<!-- ### 0.3.0
 
-0.3 marks a culmination of all of 0.2's updates. Where 0.2 focused on features and improvements in displaying the time, this release cycle will focus on time keeping. Although 0.3 brings no new user features, a lot of dependencies have been upgraded.
+0.3 marks a culmination of all of 0.2's updates. Where 0.2 focused on features and improvements in displaying the time, this release cycle will focus on time keeping. Although 0.3 brings no new user features, a lot of dependencies have been upgraded. -->
+
+### 0.2.16
+
+- A lot of architectural changes with potential fixes.
+- Removed "feature not supported" if patcher isn't supported
 
 ### 0.2.15
 

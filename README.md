@@ -1,6 +1,6 @@
 # ISOW (ISO Week)
 
-![Rust](https://github.com/tonytins/isow/workflows/Rust/badge.svg) [![Build Status](https://travis-ci.org/tonytins/isow.svg?branch=master)](https://travis-ci.org/tonytins/isow) [![codecov](https://codecov.io/gh/tonytins/isow/branch/master/graph/badge.svg)](https://codecov.io/gh/tonytins/isow)
+![Rust](https://github.com/tonytins/isow/workflows/Rust/badge.svg) [![Build Status](https://travis-ci.org/tonytins/isow.svg?branch=master)](https://travis-ci.org/tonytins/isow) [![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-v2.0%20adopted-ff69b4.svg)](CODE_OF_CONDUCT.md)
 
 A CLI program that prints the local or utc week and time in the ISO 8601 format, e.g. 2006-W52-7T10:26:20.485371700.
 
@@ -22,12 +22,6 @@ Tom Scott's [Why It's Already 2020](https://www.youtube.com/watch?v=D3jxx8Yyw1c)
 - macOS 10.7 Lion or later
 
 For more information, see Rust's [Platform Support](https://forge.rust-lang.org/release/platform-support.html) page.
-
-## Authors
-
-- **Anthony Foxclaw** - _Initial work_ - [tonytins](https://github.com/tonytins)
-
-See also the list of [contributors](https://github.com/tonytins/isow/contributors) who participated in this project.
 
 ## Installation and Usage
 
@@ -64,3 +58,7 @@ You can update ISOW at anytime by typing ``isow update``. This will give you inf
 ## License
 
 This project is licensed under the MPL 2.0 license - see the [LICENSE](LICENSE) file for details.
+
+## Code of Conduct
+
+Please note that this project is released with a [Contributor Code of Conduct](CODE_OF_CONDUCT.md). By participating in this project you agree to abide by its terms.

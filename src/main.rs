@@ -3,27 +3,48 @@
  * See the LICENSE file in the project root for more information.
  */
 #![allow(dead_code)]
-mod flags;
-mod patcher;
+#![allow(unused_imports)]
 
 use chrono::{Datelike, Local, Utc};
-use clap::{crate_authors, crate_description, crate_version, load_yaml, App};
-use flags::*;
+use clap::{crate_authors, crate_description, crate_version, App, Clap};
 use isocal::IsoDate;
-#[cfg(feature = "updater")]
-use patcher::*;
-use rbtag::{BuildDateTime, BuildInfo};
+#[cfg(feature = "updater")] use isow::patcher::Patcher;
+use isow::options::{Options, Updater};
+// use rbtag::{BuildDateTime, BuildInfo};
 use std::error::Error;
-
-pub const UNSUPPORTED_FEATURE: &str = "Feature unsupported in this build.";
-
-#[derive(BuildDateTime, BuildInfo)]
-struct BuildTag;
+use isow::options::Patcher::Update;
+use std::convert::TryInto;
 
 fn exit_on_error(err: Box<dyn Error>) {
     eprintln!("[ERROR] {}", err);
     ::std::process::exit(1);
 }
+
+/*#[derive(BuildDateTime, BuildInfo)]
+struct BuildTag;
+
+/// Remove "-clean" from the commit id
+fn normalize_commit_id(id: &str) -> String {
+    let clean_stat = "-clean";
+
+    match id.contains(clean_stat) {
+        true => {
+            id.replace(clean_stat, "")
+        },
+        false => id.to_string(),
+    }
+}
+
+fn version() -> String {
+
+    let build_commit = BuildTag {}.get_build_commit();
+
+    format!(
+        "{}-{}",
+        crate_version!(),
+        normalize_commit_id(build_commit)
+    )
+}*/
 
 fn iso_dt(is_utc: bool, is_day: bool, is_week: bool, is_year: bool, is_time: bool) -> String {
     let dt_utc = Utc::now();
@@ -69,78 +90,37 @@ fn iso_dt(is_utc: bool, is_day: bool, is_week: bool, is_year: bool, is_time: boo
     output
 }
 
-/// Remove "-clean" from the commit id
-fn normalize_commit_id(id: &str) -> String {
-    let clean_stat = "-clean";
-
-    match id.contains(clean_stat) {
-        true => {
-            id.replace(clean_stat, "")
-        },
-        false => id.to_string(),
-    }
-}
-
-fn version() -> String {
-
-    let build_commit = BuildTag {}.get_build_commit();
-
-    // If build_commit shows only "-dirty" and not the commit,
-    // then show only the version. This is meant for Crates.io builds
-    if build_commit == "-dirty" {
-        format!("{}", crate_version!())
-    } else {
-        format!(
-            "{}-{}",
-            crate_version!(),
-            normalize_commit_id(build_commit)
-        )
-    }
-}
-
 fn main() {
-    let yaml = load_yaml!("isow.yml");
-    let matches = App::from_yaml(yaml)
-        .author(crate_authors!())
-        .about(crate_description!())
-        .version(version().as_str())
-        .get_matches();
+    let opts: Options = Options::parse();
 
-    match matches.subcommand_name() {
-        #[cfg(feature = "updater")]
-        Some(UPDATE_FLAG) => {
-            if let Some(upd) = matches.subcommand_matches(UPDATE_FLAG) {
-                let patcher = Patcher::default();
-                let is_status = upd.is_present(LIST_FLAG);
+    let is_utc = opts.utc;
+    let (is_day, is_week, is_year, is_time) = (
+        opts.day,
+        opts.week,
+        opts.year,
+        opts.time,
+    );
+    let iso_date = iso_dt(is_utc, is_day, is_week, is_year, is_time);
 
-                match is_status {
-                    true => {
-                        if let Err(err) = patcher.release_list() {
-                            exit_on_error(err);
-                        }
+    #[cfg(feature = "updater")]
+    match opts.patcher {
+        Update(upd) => {
+            let patcher = Patcher::default();
+
+            match upd.list {
+                true => {
+                    if let Err(err) = patcher.release_list() {
+                        exit_on_error(err);
                     }
-                    false => {
-                        if let Err(err) = patcher.update() {
-                            exit_on_error(err);
-                        }
+                }
+                false => {
+                    if let Err(err) = patcher.update() {
+                        exit_on_error(err);
                     }
                 }
             }
         }
-        #[cfg(not(feature = "updater"))]
-        Some(UPDATE_FLAG) => {
-            println!("{}", UNSUPPORTED_FEATURE);
-        }
-        _ => {
-            let is_utc = matches.is_present(UTC_FLAG);
-            let (is_day, is_week, is_year, is_time) = (
-                matches.is_present(DAY_FLAG),
-                matches.is_present(WEEK_FLAG),
-                matches.is_present(YEAR_FLAG),
-                matches.is_present(TIME_FLAG),
-            );
-
-            println!("{}", iso_dt(is_utc, is_day, is_week, is_year, is_time));
-        }
     }
+
+    println!("{}", iso_date);
 }
